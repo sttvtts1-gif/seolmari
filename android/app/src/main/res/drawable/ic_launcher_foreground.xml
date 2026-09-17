@@ -1,0 +1,35 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- 태양(원), 중심(54,54) 반지름 14 -->
+    <path
+        android:fillColor="#E8952F"
+        android:pathData="M54,40 m-14,0 a14,14 0 1,0 28,0 a14,14 0 1,0 -28,0" />
+    <!-- 광선 8개, 중심(54,54) 기준 45도씩 회전 -->
+    <group android:pivotX="54" android:pivotY="54" android:rotation="0">
+        <path android:fillColor="#E8952F" android:pathData="M52,20 L56,20 L56,30 L52,30 Z" />
+    </group>
+    <group android:pivotX="54" android:pivotY="54" android:rotation="45">
+        <path android:fillColor="#E8952F" android:pathData="M52,20 L56,20 L56,30 L52,30 Z" />
+    </group>
+    <group android:pivotX="54" android:pivotY="54" android:rotation="90">
+        <path android:fillColor="#E8952F" android:pathData="M52,20 L56,20 L56,30 L52,30 Z" />
+    </group>
+    <group android:pivotX="54" android:pivotY="54" android:rotation="135">
+        <path android:fillColor="#E8952F" android:pathData="M52,20 L56,20 L56,30 L52,30 Z" />
+    </group>
+    <group android:pivotX="54" android:pivotY="54" android:rotation="180">
+        <path android:fillColor="#E8952F" android:pathData="M52,20 L56,20 L56,30 L52,30 Z" />
+    </group>
+    <group android:pivotX="54" android:pivotY="54" android:rotation="225">
+        <path android:fillColor="#E8952F" android:pathData="M52,20 L56,20 L56,30 L52,30 Z" />
+    </group>
+    <group android:pivotX="54" android:pivotY="54" android:rotation="270">
+        <path android:fillColor="#E8952F" android:pathData="M52,20 L56,20 L56,30 L52,30 Z" />
+    </group>
+    <group android:pivotX="54" android:pivotY="54" android:rotation="315">
+        <path android:fillColor="#E8952F" android:pathData="M52,20 L56,20 L56,30 L52,30 Z" />
+    </group>
+</vector>
