@@ -31,7 +31,7 @@ button{border:0;border-radius:13px;padding:11px 12px;font:inherit;font-weight:80
 .quick2{background:var(--amber);color:#241500}
 .hint{font-size:11px;line-height:1.55;color:var(--sub);margin:8px 0 0}
 .notice-list{margin:0;padding-left:18px;font-size:12px;line-height:1.7;color:#f4b95c}
-.map-box{width:100%;height:360px;border-radius:14px;border:1px solid var(--line);margin-top:10px;background:#0a1020}
+.map-box{width:100%;height:360px;border-radius:14px;border:1px solid var(--line);margin-top:10px;background:#0a1020;touch-action:none}
 .actions{display:flex;gap:6px;flex-wrap:wrap}
 .actions button{flex:1;min-width:100px}
 .bldg{border:1px solid var(--line);border-radius:15px;background:var(--panel2);padding:13px;margin-bottom:10px}
@@ -180,6 +180,8 @@ function initMap(){
   const container=$('map');
   state.map=new kakao.maps.Map(container,{ center:new kakao.maps.LatLng(37.5665,126.9780), level:3 });
   state.map.setMapTypeId(kakao.maps.MapTypeId.HYBRID);
+  state.map.setZoomable(true);
+  state.map.setDraggable(true);
   kakao.maps.event.addListener(state.map,'click',onMapClick);
   setMsg('지도를 불러왔습니다. 주소를 검색해 보세요.');
 }
