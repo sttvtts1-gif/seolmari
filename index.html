@@ -1,51 +1,642 @@
 <!doctype html>
 <html lang="ko">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>전화 알림</title><link rel="manifest" href="./manifest.json"><meta name="theme-color" content="#10192e"><link rel="apple-touch-icon" href="./icon-192.png">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>태양광 발전용량 계산기</title>
+<link rel="manifest" href="./manifest.json">
+<meta name="theme-color" content="#0c1324">
+<link rel="apple-touch-icon" href="./icon-192.png">
 <style>
-:root{--bg:#0c1324;--panel:#141d33;--panel2:#1a2440;--line:#26314f;--amber:#e8952f;--ink:#eef1fa;--sub:#929bb4;--red:#e0596a;--green:#33b17a}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:"Malgun Gothic",system-ui,sans-serif}.wrap{max-width:520px;margin:auto;padding:20px 16px 40px}.status{width:max-content;max-width:100%;margin:0 auto 12px;padding:9px 14px;border:1px solid var(--line);border-radius:999px;background:var(--panel);color:#f4b95c;font-size:12px}h1{text-align:center;margin:4px 0 2px;font-size:32px}.subtitle{text-align:center;color:var(--red);font-weight:800;font-size:12px;letter-spacing:2px;margin-bottom:18px}.card{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:16px;margin-bottom:14px}.card h2{font-size:14px;color:var(--sub);margin:0 0 12px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.field{margin-bottom:11px}label{display:block;font-size:11px;color:var(--sub);margin:0 0 6px 2px}input,select,textarea{width:100%;border:1px solid var(--line);border-radius:13px;background:var(--panel2);color:var(--ink);padding:12px;font:inherit;font-size:14px}textarea{min-height:72px;resize:vertical}button{border:0;border-radius:13px;padding:12px 14px;font:inherit;font-weight:800;cursor:pointer}.primary{width:100%;background:linear-gradient(135deg,#5a86ff,#3f66e6);color:white}.quick{width:100%;background:var(--amber);color:#241500;margin-bottom:14px}.secondary{background:var(--panel2);color:var(--ink);border:1px solid var(--line)}.danger{background:#421f2a;color:#ff9bab}.done{background:#173d32;color:#6fe0af}.banner{display:none;align-items:center;justify-content:space-between;gap:10px;padding:12px;margin-bottom:14px;border:1px solid #7c5729;border-radius:14px;background:#302516;color:#ffd18e;font-size:12px}.banner button{padding:8px;background:var(--amber)}.entry{padding:13px;margin-bottom:10px;border:1px solid var(--line);border-radius:15px;background:var(--panel2)}.entry.due{border-color:var(--red)}.company{font-weight:800}.phone,.meta{color:var(--sub);font-size:12px}.memo{font-size:13px;margin:7px 0;white-space:pre-wrap}.actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}.actions button{flex:1;padding:8px;font-size:12px;min-width:64px}.empty{text-align:center;color:var(--sub);padding:20px;font-size:13px}.test-note{font-size:12px;line-height:1.55;color:var(--sub);margin:-5px 0 14px}.due-title{color:#ff8291!important}.footer{text-align:center;color:var(--sub);font-size:11px;line-height:1.6;margin-top:18px}@media(max-width:380px){.grid{grid-template-columns:1fr}}
+:root{--bg:#0c1324;--panel:#141d33;--panel2:#1a2440;--line:#26314f;--amber:#e8952f;--ink:#eef1fa;--sub:#929bb4;--red:#e0596a;--green:#33b17a;--blue:#5a86ff}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Malgun Gothic",system-ui,sans-serif}
+.wrap{max-width:640px;margin:auto;padding:20px 16px 60px}
+.status{width:max-content;max-width:100%;margin:0 auto 12px;padding:9px 14px;border:1px solid var(--line);border-radius:999px;background:var(--panel);color:#f4b95c;font-size:12px}
+h1{text-align:center;margin:4px 0 2px;font-size:26px}
+.subtitle{text-align:center;color:var(--red);font-weight:800;font-size:11px;letter-spacing:2px;margin-bottom:18px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:16px;margin-bottom:14px}
+.card h2{font-size:14px;color:var(--sub);margin:0 0 12px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.field{margin-bottom:11px}
+label{display:block;font-size:11px;color:var(--sub);margin:0 0 6px 2px}
+input,select,textarea{width:100%;border:1px solid var(--line);border-radius:13px;background:var(--panel2);color:var(--ink);padding:11px;font:inherit;font-size:14px}
+textarea{min-height:72px;resize:vertical}
+button{border:0;border-radius:13px;padding:11px 12px;font:inherit;font-weight:800;cursor:pointer;font-size:13px}
+.primary{width:100%;background:linear-gradient(135deg,#5a86ff,#3f66e6);color:white}
+.bigcalc{margin:6px 0 14px;padding:15px}
+.secondary{background:var(--panel2);color:var(--ink);border:1px solid var(--line)}
+.danger{background:#421f2a;color:#ff9bab}
+.done{background:#173d32;color:#6fe0af}
+.quick2{background:var(--amber);color:#241500}
+.hint{font-size:11px;line-height:1.55;color:var(--sub);margin:8px 0 0}
+.notice-list{margin:0;padding-left:18px;font-size:12px;line-height:1.7;color:#f4b95c}
+.map-box{width:100%;height:360px;border-radius:14px;border:1px solid var(--line);margin-top:10px;background:#0a1020}
+.actions{display:flex;gap:6px;flex-wrap:wrap}
+.actions button{flex:1;min-width:100px}
+.bldg{border:1px solid var(--line);border-radius:15px;background:var(--panel2);padding:13px;margin-bottom:10px}
+.bldg-head{display:flex;align-items:center;gap:8px;margin-bottom:9px}
+.bldg-head input[type=text]{font-weight:800;flex:1}
+.bldg-meta{font-size:11px;color:var(--sub);margin:2px 0 8px}
+.bldg-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+.bldg-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.bldg-actions button{flex:1;min-width:90px;font-size:12px;padding:9px}
+.ridge-set{color:var(--green)}
+.ridge-unset{color:var(--red)}
+canvas.layout{width:100%;background:#0a1020;border:1px solid var(--line);border-radius:12px;margin:8px 0}
+.result-block{border:1px solid var(--line);border-radius:15px;padding:12px;margin-bottom:10px;background:var(--panel2)}
+.result-block h3{margin:0 0 6px;font-size:13px}
+.result-block .err{color:var(--red);font-size:12px}
+.result-line{font-size:12px;color:var(--sub);margin:2px 0}
+.result-line b{color:var(--ink)}
+.totalbox{border:1px solid var(--blue);border-radius:15px;padding:14px;background:#132043;margin-top:6px}
+.totalbox .big{font-size:22px;font-weight:800;color:#9db8ff}
+table.revtable{width:100%;border-collapse:collapse;font-size:12px;margin-top:8px}
+table.revtable th,table.revtable td{border:1px solid var(--line);padding:8px 6px;text-align:right}
+table.revtable th:first-child,table.revtable td:first-child{text-align:left}
+table.revtable th{background:var(--panel2);color:var(--sub);font-weight:700}
+.footer{text-align:center;color:var(--sub);font-size:11px;line-height:1.6;margin-top:18px}
+@media(max-width:420px){.grid,.bldg-row{grid-template-columns:1fr}}
 </style></head>
 <body><main class="wrap">
-<div class="status" id="status">알림 상태 확인 중</div><h1>전화 알림</h1><div class="subtitle">FOLLOW-UP ALARM</div>
-<div class="banner" id="installBanner"><span>휴대폰 홈 화면에 앱으로 설치할 수 있습니다.</span><button id="installButton">앱 설치</button></div>
-<div class="banner" id="permBanner"><span>알림 권한을 허용해야 알림을 표시할 수 있습니다.</span><button id="permButton">알림 허용</button></div>
-<section class="card" id="dueSection" hidden><h2 class="due-title">지금 확인 필요</h2><div id="dueList"></div></section>
+
+<div class="status" id="status">초안(MVP) · 데이터 미검증 항목 포함</div>
+<h1>태양광 발전용량 계산기</h1>
+<div class="subtitle">SOLAR CAPACITY DRAFT</div>
+
 <section class="card">
-<button class="quick" id="quickButton">⏱ 테스트 알람을 10초 뒤로 설정</button><p class="test-note">버튼을 누르면 10초 뒤 약 30초간 반복 알람음과 진동이 작동합니다. 테스트 중에는 이 화면을 켜 두세요.</p>
-<h2>1. 업체 / 연락처</h2><div class="grid"><div class="field"><input id="company" placeholder="업체명"></div><div class="field"><input id="phone" placeholder="연락처" inputmode="tel"></div></div>
-<h2>2. 알림 일시</h2><div class="grid"><div class="field"><label for="date">날짜</label><input id="date" type="date"></div><div class="field"><label for="time">시간</label><input id="time" type="time" step="60"></div></div>
-<h2>3. 반복</h2><div class="field"><select id="repeat"><option value="once">한 번</option><option value="daily">매일</option><option value="weekly">매주</option></select></div>
-<h2>4. 메모</h2><div class="field"><textarea id="memo" placeholder="메모 내용을 입력하세요"></textarea></div><input id="editId" type="hidden"><button class="primary" id="saveButton">알림 저장</button>
-</section><section class="card"><h2>설정된 알림</h2><div id="list"></div></section><div class="footer">앱이 열려 있으면 반복 알람음이 약 30초간 재생됩니다.<br>앱이 백그라운드에 있으면 안드로이드 기본 알림음이 사용될 수 있습니다.</div>
-</main><script>
-const KEY='jjanae_entries_v2', $=id=>document.getElementById(id);let swReg=null,deferredInstallPrompt=null;
-const load=()=>{try{return JSON.parse(localStorage.getItem(KEY))||[]}catch{return[]}},store=list=>localStorage.setItem(KEY,JSON.stringify(list)),pad=n=>String(n).padStart(2,'0');
-const localDate=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`,localTime=d=>`${pad(d.getHours())}:${pad(d.getMinutes())}`;
-const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-function setFormTime(d){$('date').value=localDate(d);$('time').value=localTime(d)}
-function resetForm(){['company','phone','memo','editId'].forEach(id=>$(id).value='');$('repeat').value='once';setFormTime(new Date(Date.now()+300000))}
-function formTimestamp(){return new Date(`${$('date').value}T${$('time').value}:00`).getTime()}
-async function ensurePermission(){if(!('Notification'in window))return false;if(Notification.permission==='granted')return true;if(Notification.permission==='default')return(await Notification.requestPermission())==='granted';return false}
-function updatePermission(){const p=('Notification'in window)?Notification.permission:'unsupported';$('status').textContent=p==='granted'?'● 알림 사용 가능':p==='denied'?'알림이 차단됨 — 브라우저 설정에서 허용 필요':p==='default'?'알림 권한 필요':'이 브라우저는 알림을 지원하지 않음';$('permBanner').style.display=p==='granted'?'none':'flex'}
-function saveEntry(v){const company=(v?.company??$('company').value).trim(),phone=(v?.phone??$('phone').value).trim(),memo=(v?.memo??$('memo').value).trim(),fireAt=v?.fireAt??formTimestamp(),repeat=v?.repeat??$('repeat').value,editId=v?.editId??$('editId').value;if(!company||!phone||!Number.isFinite(fireAt)){alert('업체명, 연락처, 알림 일시를 입력해 주세요.');return false}if(fireAt<=Date.now()){alert('현재보다 뒤의 시간을 선택해 주세요.');return false}let list=load();const entry={id:editId||`e_${Date.now()}_${Math.random().toString(36).slice(2,7)}`,company,phone,memo,repeat,nextFireAt:fireAt,lastFiredFor:null,done:false,createdAt:Date.now()};list=editId?list.map(e=>e.id===editId?{...e,...entry}:e):[...list,entry];store(list);resetForm();render();ensurePermission().then(updatePermission);return true}
-async function quickTest(){await prepareAudio();const fireAt=Date.now()+10000;if(saveEntry({company:'10초 알람 테스트',phone:'010-0000-0000',memo:'긴 알람음 기능 테스트',fireAt,repeat:'once'})){await ensurePermission();updatePermission();alert(`테스트 알람을 10초 뒤로 설정했습니다. 이 화면을 켜 두세요.`)}}
-function removeEntry(id){if(confirm('이 알림을 삭제할까요?')){stopAlarmSound();store(load().filter(e=>e.id!==id));render()}}function completeEntry(id){stopAlarmSound();store(load().map(e=>e.id===id?{...e,done:true}:e));render()}function snooze(id){stopAlarmSound();store(load().map(e=>e.id===id?{...e,nextFireAt:Date.now()+60000,lastFiredFor:null,done:false}:e));render()}
-function editEntry(id){const e=load().find(x=>x.id===id);if(!e)return;$('company').value=e.company;$('phone').value=e.phone;$('memo').value=e.memo||'';$('repeat').value=e.repeat||'once';$('editId').value=e.id;setFormTime(new Date(e.nextFireAt));scrollTo({top:0,behavior:'smooth'})}function callPhone(p){location.href=`tel:${p.replace(/[^0-9+]/g,'')}`}
-function countdown(ts){const sec=Math.ceil((ts-Date.now())/1000);if(sec<=0)return'지금';if(sec<60)return`${sec}초 뒤`;const min=Math.ceil(sec/60);if(min<60)return`${min}분 뒤`;return`${Math.floor(min/60)}시간 ${min%60}분 뒤`}
-function card(e,due){return`<article class="entry ${due?'due':''}"><div class="company">${esc(e.company)}</div><div class="phone">${esc(e.phone)}</div>${e.memo?`<div class="memo">${esc(e.memo)}</div>`:''}<div class="meta">${due?'알림 시간 도착':countdown(e.nextFireAt)} · ${new Date(e.nextFireAt).toLocaleString('ko-KR')} · ${e.repeat==='daily'?'매일':e.repeat==='weekly'?'매주':'한 번'}</div><div class="actions">${due?'<button class="danger" onclick="stopAlarmSound()">알람음 끄기</button>':''}<button class="done" onclick="callPhone('${esc(e.phone)}')">전화</button><button class="done" onclick="completeEntry('${e.id}')">완료</button><button class="secondary" onclick="snooze('${e.id}')">1분 미루기</button><button class="secondary" onclick="editEntry('${e.id}')">수정</button><button class="danger" onclick="removeEntry('${e.id}')">삭제</button></div></article>`}
-function render(){const entries=load().filter(e=>!e.done).sort((a,b)=>a.nextFireAt-b.nextFireAt),due=entries.filter(e=>e.nextFireAt<=Date.now()),future=entries.filter(e=>e.nextFireAt>Date.now());$('dueSection').hidden=!due.length;$('dueList').innerHTML=due.map(e=>card(e,true)).join('');$('list').innerHTML=future.length?future.map(e=>card(e,false)).join(''):'<div class="empty">설정된 알림이 없습니다.</div>'}
-let alarmAudioCtx=null,alarmOscillator=null,alarmPulseTimer=null,alarmStopTimer=null;
-async function prepareAudio(){try{const C=window.AudioContext||window.webkitAudioContext;if(!C)return;alarmAudioCtx=alarmAudioCtx||new C();if(alarmAudioCtx.state==='suspended')await alarmAudioCtx.resume()}catch{}}
-function stopAlarmSound(){if(alarmPulseTimer)clearInterval(alarmPulseTimer);if(alarmStopTimer)clearTimeout(alarmStopTimer);alarmPulseTimer=null;alarmStopTimer=null;try{alarmOscillator?.stop()}catch{}alarmOscillator=null;if(navigator.vibrate)navigator.vibrate(0)}
-async function startAlarmSound(){stopAlarmSound();await prepareAudio();try{const ctx=alarmAudioCtx;if(ctx){const osc=ctx.createOscillator(),gain=ctx.createGain();osc.type='square';osc.frequency.value=760;gain.gain.value=.11;osc.connect(gain);gain.connect(ctx.destination);osc.start();alarmOscillator=osc;let high=false;alarmPulseTimer=setInterval(()=>{if(!alarmOscillator)return;high=!high;osc.frequency.setValueAtTime(high?1080:760,ctx.currentTime);gain.gain.setValueAtTime(high ? 0.14 : 0.08,ctx.currentTime)},420);alarmStopTimer=setTimeout(stopAlarmSound,30000)}}catch{}if(navigator.vibrate)navigator.vibrate([700,250,700,250,700,500,700,250,700,250,700,500,700,250,700])}
-function notify(e){const title=`전화할 시간: ${e.company}`,body=`${e.phone}${e.memo?' · '+e.memo:''}`;startAlarmSound();if(swReg?.active)swReg.active.postMessage({type:'SHOW_ALARM',title,body,tag:e.id,entryId:e.id});else if('Notification'in window&&Notification.permission==='granted')new Notification(title,{body,icon:'./icon-192.png',tag:e.id,requireInteraction:true})}
-function nextOccurrence(e){if(e.repeat==='once')return null;const d=new Date(e.nextFireAt),days=e.repeat==='weekly'?7:1;do{d.setDate(d.getDate()+days)}while(d.getTime()<=Date.now());return d.getTime()}
-function checkAlarms(){let list=load(),changed=false;for(const e of list)if(!e.done&&e.nextFireAt<=Date.now()&&e.lastFiredFor!==e.nextFireAt){notify(e);e.lastFiredFor=e.nextFireAt;const next=nextOccurrence(e);if(next){e.nextFireAt=next;e.lastFiredFor=null}changed=true}if(changed)store(list);render()}
-$('saveButton').onclick=()=>saveEntry();$('quickButton').onclick=quickTest;$('permButton').onclick=()=>ensurePermission().then(updatePermission);
-$('installButton').onclick=async()=>{if(!deferredInstallPrompt){alert('Chrome 메뉴에서 “앱 설치” 또는 “홈 화면에 추가”를 선택해 주세요.');return}deferredInstallPrompt.prompt();await deferredInstallPrompt.userChoice;deferredInstallPrompt=null;$('installBanner').style.display='none'};
-window.addEventListener('beforeinstallprompt',event=>{event.preventDefault();deferredInstallPrompt=event;$('installBanner').style.display='flex'});
-window.addEventListener('appinstalled',()=>{$('installBanner').style.display='none';deferredInstallPrompt=null});
-if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js').then(async reg=>{await navigator.serviceWorker.ready;swReg=reg}).catch(console.error);
-resetForm();updatePermission();render();checkAlarms();setInterval(checkAlarms,1000);
-</script></body></html>
+<h2>먼저 확인해 주세요</h2>
+<ul class="notice-list">
+<li>카카오맵 API는 건물 외곽선을 자동으로 추출해 주는 기능을 제공하지 않습니다. 검색된 주소의 위성지도 위에서 건물 모서리를 사용자가 직접 클릭해서 표시해야 합니다.</li>
+<li>면적과 모듈 배치는 클릭한 좌표(위도/경도)를 기준으로 계산한 근사치입니다. 실제 시공 전에는 반드시 현장 실측이 필요합니다.</li>
+<li>지붕 경사각을 입력하지 않으면(기본값 0°) 위에서 내려다본 평면 면적 기준으로 계산되며, 실제 경사 지붕 면적/모듈 수보다 적게 나올 수 있습니다.</li>
+<li>모듈 규격은 정확한 데이터시트를 확인하지 못해 기본값(2465×1134mm, 645W)으로 넣어 두었습니다. 실제 사용 제품의 데이터시트 수치로 반드시 교체해 주세요.</li>
+</ul>
+</section>
+
+<section class="card">
+<h2>1. 카카오맵 연동 설정</h2>
+<div class="field"><label>카카오 JavaScript 키 (developers.kakao.com에서 발급)</label><input id="kakaoKey" placeholder="예: 1a2b3c4d5e6f..."></div>
+<button class="secondary" id="saveKeyBtn" style="width:100%">키 저장하고 지도 불러오기</button>
+<p class="hint">키는 이 브라우저(localStorage)에만 저장되며 서버로 전송되지 않습니다.</p>
+</section>
+
+<section class="card">
+<h2>2. 주소 검색 및 건물 표시</h2>
+<div class="field"><input id="addressInput" placeholder="도로명 또는 지번 주소 입력"></div>
+<button class="primary" id="searchBtn">주소 검색</button>
+<div id="mapMsg" class="hint"></div>
+<div id="map" class="map-box"></div>
+<div class="actions" style="margin-top:10px">
+<button class="secondary" id="toggleMapType">위성/일반 전환</button>
+<button class="quick2" id="startBuildingBtn">+ 건물 그리기 시작</button>
+</div>
+<div class="actions" style="margin-top:6px">
+<button class="secondary" id="undoPointBtn">마지막 점 취소</button>
+<button class="done" id="finishBuildingBtn">건물 완성</button>
+<button class="danger" id="cancelDrawBtn">그리기 취소</button>
+</div>
+<p class="hint">지도를 확대한 뒤 지붕 모서리를 순서대로 클릭하세요. 점 개수 제한 없음 — 건물이 사각형이 아니어도 여러 점을 찍어 실제 모양대로 면적을 산출할 수 있습니다. 건물이 여러 동이면 "건물 그리기 시작"을 반복해 각각 그리세요.</p>
+</section>
+
+<section class="card">
+<h2>3. 건물 목록 및 지붕 설정</h2>
+<div id="buildingList"><p class="hint">아직 그려진 건물이 없습니다.</p></div>
+</section>
+
+<section class="card">
+<h2>4. 모듈 및 설치 간격 설정</h2>
+<div class="grid">
+<div class="field"><label>모듈 용량 (W)</label><input id="modWatt" type="number" value="645"></div>
+<div class="field"><label>모듈 등급</label><input id="modGrade" type="text" value="현대 1등급"></div>
+<div class="field"><label>모듈 장변 (mm, 가로 배치 방향)</label><input id="modW" type="number" value="2465"></div>
+<div class="field"><label>모듈 단변 (mm)</label><input id="modD" type="number" value="1134"></div>
+<div class="field"><label>모듈간 가로 간격 (mm)</label><input id="colGap" type="number" value="20"></div>
+<div class="field"><label>모듈간 세로 간격 (mm)</label><input id="rowGap" type="number" value="20"></div>
+<div class="field"><label>지붕 가장자리 여백 (mm)</label><input id="edgeMargin" type="number" value="300"></div>
+<div class="field"><label>단 사이 통로 폭 (mm, 남북지붕 뒷단용)</label><input id="tierGap" type="number" value="600"></div>
+</div>
+<p class="hint">장변 2465×단변 1134mm(645W)는 확인되지 않은 추정 기본값입니다. 실제 사용할 모듈의 데이터시트 규격으로 반드시 수정하세요. 간격·여백 값도 표준이 아닌 조정 가능한 기본값입니다.</p>
+</section>
+
+<button class="primary bigcalc" id="calcBtn">발전용량 계산하기</button>
+
+<section class="card" id="resultsCard" hidden>
+<h2>계산 결과 (건물별)</h2>
+<div id="buildingResults"></div>
+<div class="totalbox" id="totalBox"></div>
+</section>
+
+<section class="card" id="revenueCard" hidden>
+<h2>5. 발전량 및 수익 예상</h2>
+<div class="grid">
+<div class="field"><label>전력 단가 (원/kWh)</label><input id="priceKwh" type="number" value="200"></div>
+</div>
+<table class="revtable" id="revTable"></table>
+<p class="hint">발전시간(3.6 / 3.8 / 4.0시간)은 비교용으로 입력한 가정값이며 실제 발전량은 지역·설치각도·음영 등에 따라 달라집니다. 단가 200원/kWh은 입력하신 1등급 장기계약 기준 값이며 언제든 수정할 수 있습니다.</p>
+</section>
+
+<section class="card">
+<h2>원시 데이터 (복사용)</h2>
+<textarea id="rawData" readonly placeholder="계산 후 이 곳에 건물 좌표·면적·모듈 수 데이터가 표시됩니다."></textarea>
+</section>
+
+<div class="footer">이 앱은 초안(MVP)입니다. 실제 설계·인허가·시공 전에는 반드시 전문가의 현장 실측과 구조 검토를 거쳐야 합니다.</div>
+</main>
+
+<script>
+/* ===== 상태 ===== */
+const $=id=>document.getElementById(id);
+const KAKAO_KEY_STORAGE='solar_kakao_key_v1';
+const state={
+  map:null,
+  mapType:'HYBRID',
+  drawMode:null, // null | 'building' | 'ridge'
+  drawingBuildingId:null,
+  tempPoints:[],
+  tempOverlay:null,
+  buildings:[],
+  buildingSeq:0,
+};
+
+function setMsg(t){ $('mapMsg').textContent=t||''; }
+
+/* ===== 카카오맵 로드 ===== */
+function loadKakaoSdk(key){
+  return new Promise((resolve,reject)=>{
+    if(window.kakao && window.kakao.maps && window.kakao.maps.services){ resolve(); return; }
+    const existing=document.getElementById('kakaoSdkScript');
+    if(existing) existing.remove();
+    const script=document.createElement('script');
+    script.id='kakaoSdkScript';
+    script.src=`https://dapi.kakao.com/v2/maps/sdk.js?appkey=${encodeURIComponent(key)}&autoload=false&libraries=services`;
+    script.onload=()=>{ window.kakao.maps.load(()=>resolve()); };
+    script.onerror=()=>reject(new Error('카카오 지도 스크립트를 불러오지 못했습니다. 키가 올바른지 확인해 주세요.'));
+    document.head.appendChild(script);
+  });
+}
+
+function initMap(){
+  const container=$('map');
+  state.map=new kakao.maps.Map(container,{ center:new kakao.maps.LatLng(37.5665,126.9780), level:3 });
+  state.map.setMapTypeId(kakao.maps.MapTypeId.HYBRID);
+  kakao.maps.event.addListener(state.map,'click',onMapClick);
+  setMsg('지도를 불러왔습니다. 주소를 검색해 보세요.');
+}
+
+async function trySavedKey(){
+  const saved=localStorage.getItem(KAKAO_KEY_STORAGE);
+  if(saved){
+    $('kakaoKey').value=saved;
+    try{ await loadKakaoSdk(saved); initMap(); }
+    catch(e){ setMsg(e.message); }
+  } else {
+    setMsg('카카오 JavaScript 키를 먼저 입력하고 저장해 주세요.');
+  }
+}
+
+$('saveKeyBtn').onclick=async()=>{
+  const key=$('kakaoKey').value.trim();
+  if(!key){ alert('카카오 JavaScript 키를 입력해 주세요.'); return; }
+  localStorage.setItem(KAKAO_KEY_STORAGE,key);
+  setMsg('지도를 불러오는 중...');
+  try{ await loadKakaoSdk(key); initMap(); setMsg('지도를 불러왔습니다.'); }
+  catch(e){ setMsg(e.message); }
+};
+
+$('toggleMapType').onclick=()=>{
+  if(!state.map){ alert('먼저 카카오 키를 저장해 지도를 불러오세요.'); return; }
+  state.mapType = state.mapType==='HYBRID' ? 'ROADMAP' : 'HYBRID';
+  state.map.setMapTypeId(kakao.maps.MapTypeId[state.mapType]);
+};
+
+/* ===== 주소 검색 ===== */
+$('searchBtn').onclick=async()=>{
+  if(!state.map){ alert('먼저 카카오 키를 저장해 지도를 불러오세요.'); return; }
+  const q=$('addressInput').value.trim();
+  if(!q){ alert('주소를 입력해 주세요.'); return; }
+  const geocoder=new kakao.maps.services.Geocoder();
+  geocoder.addressSearch(q,(result,statusv)=>{
+    if(statusv===kakao.maps.services.Status.OK && result.length){
+      const item=result[0];
+      const lat=parseFloat(item.y), lng=parseFloat(item.x);
+      const loc=new kakao.maps.LatLng(lat,lng);
+      state.map.setCenter(loc);
+      state.map.setLevel(2);
+      if(state.searchMarker) state.searchMarker.setMap(null);
+      state.searchMarker=new kakao.maps.Marker({map:state.map,position:loc});
+      setMsg(`검색됨: ${item.address_name||q}. 지도를 확대해 건물 모서리를 클릭해 표시하세요.`);
+    } else {
+      const places=new kakao.maps.services.Places();
+      places.keywordSearch(q,(data,st2)=>{
+        if(st2===kakao.maps.services.Status.OK && data.length){
+          const item=data[0];
+          const lat=parseFloat(item.y), lng=parseFloat(item.x);
+          const loc=new kakao.maps.LatLng(lat,lng);
+          state.map.setCenter(loc);
+          state.map.setLevel(2);
+          if(state.searchMarker) state.searchMarker.setMap(null);
+          state.searchMarker=new kakao.maps.Marker({map:state.map,position:loc});
+          setMsg(`장소명으로 검색됨: ${item.place_name}. 지도를 확대해 건물 모서리를 클릭해 표시하세요.`);
+        } else {
+          setMsg('주소 또는 장소를 찾지 못했습니다. 표기를 확인해 주세요.');
+        }
+      });
+    }
+  });
+};
+
+/* ===== 건물/용마루 그리기 ===== */
+function onMapClick(e){
+  const lat=e.latLng.getLat(), lng=e.latLng.getLng();
+  if(state.drawMode==='building'){
+    state.tempPoints.push({lat,lng});
+    refreshTempOverlay();
+  } else if(state.drawMode==='ridge'){
+    state.tempPoints.push({lat,lng});
+    if(state.tempPoints.length>=2){ finishRidge(); }
+    else { refreshTempOverlay(); }
+  }
+}
+
+function refreshTempOverlay(){
+  if(state.tempOverlay){ state.tempOverlay.setMap(null); state.tempOverlay=null; }
+  if(state.tempPoints.length<1) return;
+  state.tempOverlay=new kakao.maps.Polyline({
+    map:state.map,
+    path:state.tempPoints.map(p=>new kakao.maps.LatLng(p.lat,p.lng)),
+    strokeWeight:3, strokeColor:'#e8952f', strokeStyle:'shortdash'
+  });
+}
+function clearTempOverlay(){ if(state.tempOverlay){ state.tempOverlay.setMap(null); state.tempOverlay=null; } }
+
+$('startBuildingBtn').onclick=()=>{
+  if(!state.map){ alert('먼저 카카오 키를 저장해 지도를 불러오세요.'); return; }
+  state.drawMode='building'; state.tempPoints=[]; clearTempOverlay();
+  setMsg('건물(지붕) 모서리를 순서대로 클릭하세요. 완료되면 "건물 완성"을 누르세요.');
+};
+$('undoPointBtn').onclick=()=>{ if(state.tempPoints.length){ state.tempPoints.pop(); refreshTempOverlay(); } };
+$('cancelDrawBtn').onclick=()=>{
+  state.drawMode=null; state.drawingBuildingId=null; state.tempPoints=[]; clearTempOverlay(); setMsg('그리기를 취소했습니다.');
+};
+$('finishBuildingBtn').onclick=()=>{
+  if(state.drawMode!=='building'){ alert('먼저 "건물 그리기 시작"을 눌러주세요.'); return; }
+  if(state.tempPoints.length<3){ alert('점을 3개 이상 찍어야 건물을 완성할 수 있습니다.'); return; }
+  const id='b'+(++state.buildingSeq);
+  const overlay=new kakao.maps.Polygon({
+    map:state.map,
+    path:state.tempPoints.map(p=>new kakao.maps.LatLng(p.lat,p.lng)),
+    strokeWeight:2, strokeColor:'#5a86ff', strokeOpacity:0.9,
+    fillColor:'#5a86ff', fillOpacity:0.25
+  });
+  state.buildings.push({
+    id, name:`건물 ${state.buildings.length+1}`, points:state.tempPoints.slice(),
+    overlay, ridge:null, ridgeOverlay:null, roofType:'ns', tiers:2, tilt:0, included:true
+  });
+  state.drawMode=null; state.tempPoints=[]; clearTempOverlay();
+  setMsg('건물이 추가되었습니다. 아래 "건물 목록"에서 지붕 형태와 용마루선을 설정하세요.');
+  renderBuildingList();
+};
+
+function startRidgeDraw(id){
+  if(!state.map) return;
+  state.drawMode='ridge'; state.drawingBuildingId=id; state.tempPoints=[]; clearTempOverlay();
+  setMsg('용마루(지붕 마루선)의 양 끝점 2곳을 지도에서 클릭하세요.');
+}
+function finishRidge(){
+  const b=state.buildings.find(x=>x.id===state.drawingBuildingId);
+  if(b){
+    if(b.ridgeOverlay) b.ridgeOverlay.setMap(null);
+    b.ridgeOverlay=new kakao.maps.Polyline({
+      map:state.map, path:state.tempPoints.map(p=>new kakao.maps.LatLng(p.lat,p.lng)),
+      strokeWeight:4, strokeColor:'#e0596a'
+    });
+    b.ridge=state.tempPoints.slice();
+  }
+  state.drawMode=null; state.drawingBuildingId=null; state.tempPoints=[]; clearTempOverlay();
+  setMsg('용마루선이 설정되었습니다.');
+  renderBuildingList();
+}
+
+function removeBuilding(id){
+  const idx=state.buildings.findIndex(x=>x.id===id);
+  if(idx<0) return;
+  const b=state.buildings[idx];
+  if(b.overlay) b.overlay.setMap(null);
+  if(b.ridgeOverlay) b.ridgeOverlay.setMap(null);
+  state.buildings.splice(idx,1);
+  renderBuildingList();
+}
+
+/* ===== 건물 목록 렌더 ===== */
+function renderBuildingList(){
+  const wrap=$('buildingList');
+  if(!state.buildings.length){ wrap.innerHTML='<p class="hint">아직 그려진 건물이 없습니다.</p>'; return; }
+  wrap.innerHTML=state.buildings.map(b=>{
+    const areaTxt=(()=>{ try{ return computeAreaOnly(b).toFixed(1); }catch(e){ return '-'; } })();
+    return `
+    <div class="bldg" data-id="${b.id}">
+      <div class="bldg-head">
+        <input type="checkbox" ${b.included?'checked':''} onchange="toggleIncluded('${b.id}',this.checked)">
+        <input type="text" value="${escapeHtml(b.name)}" onchange="renameBuilding('${b.id}',this.value)">
+      </div>
+      <div class="bldg-meta">점 ${b.points.length}개 · 평면 면적 약 ${areaTxt} m² · 용마루선: <span class="${b.ridge?'ridge-set':'ridge-unset'}">${b.ridge?'설정됨':'미설정'}</span></div>
+      <div class="bldg-row">
+        <div class="field" style="margin-bottom:0"><label>지붕 형태 (용마루 기준)</label>
+          <select onchange="setRoofType('${b.id}',this.value)">
+            <option value="ns" ${b.roofType==='ns'?'selected':''}>남북지붕 (앞단 일괄 + 뒷단 단 분할)</option>
+            <option value="ew" ${b.roofType==='ew'?'selected':''}>동서지붕 (인삼밭형, 1단 전체)</option>
+          </select>
+        </div>
+        <div class="field" style="margin-bottom:0"><label>뒷단 분할 단수 (남북지붕만 적용)</label>
+          <select ${b.roofType==='ew'?'disabled':''} onchange="setTiers('${b.id}',this.value)">
+            <option value="2" ${b.tiers===2?'selected':''}>2단</option>
+            <option value="3" ${b.tiers===3?'selected':''}>3단</option>
+          </select>
+        </div>
+      </div>
+      <div class="field" style="margin-bottom:0"><label>지붕 경사각 (도, 0=평면 기준/미입력)</label>
+        <input type="number" value="${b.tilt}" onchange="setTilt('${b.id}',this.value)">
+      </div>
+      <div class="bldg-actions">
+        <button class="quick2" onclick="startRidgeDraw('${b.id}')">용마루선 그리기</button>
+        <button class="danger" onclick="removeBuilding('${b.id}')">건물 삭제</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+function escapeHtml(s){ return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function toggleIncluded(id,val){ const b=state.buildings.find(x=>x.id===id); if(b) b.included=val; }
+function renameBuilding(id,val){ const b=state.buildings.find(x=>x.id===id); if(b) b.name=val||b.name; renderBuildingList(); }
+function setRoofType(id,val){ const b=state.buildings.find(x=>x.id===id); if(b) b.roofType=val; renderBuildingList(); }
+function setTiers(id,val){ const b=state.buildings.find(x=>x.id===id); if(b) b.tiers=parseInt(val,10); }
+function setTilt(id,val){ const b=state.buildings.find(x=>x.id===id); if(b) b.tilt=parseFloat(val)||0; renderBuildingList(); }
+
+/* ===== 기하 계산 유틸 ===== */
+function toLocalXY(lat,lng,originLat,originLng){
+  const mPerLat=110540; // 위도 1도당 대략 미터 (근사값)
+  const mPerLng=111320*Math.cos(originLat*Math.PI/180); // 경도 1도당 대략 미터 (근사값)
+  return { x:(lng-originLng)*mPerLng, y:(lat-originLat)*mPerLat };
+}
+function shoelaceArea(pts){
+  let s=0;
+  for(let i=0;i<pts.length;i++){ const p1=pts[i], p2=pts[(i+1)%pts.length]; s+=p1.x*p2.y-p2.x*p1.y; }
+  return Math.abs(s)/2;
+}
+function normalize(v){ const len=Math.hypot(v.x,v.y)||1; return {x:v.x/len,y:v.y/len}; }
+function computeAreaOnly(b){
+  if(b.points.length<3) return 0;
+  const origin=b.points[0];
+  const localPts=b.points.map(p=>toLocalXY(p.lat,p.lng,origin.lat,origin.lng));
+  return shoelaceArea(localPts);
+}
+function clipHalfPlane(poly, thresholdV, keepAbove){
+  if(!poly.length) return [];
+  const result=[];
+  for(let i=0;i<poly.length;i++){
+    const curr=poly[i], prev=poly[(i-1+poly.length)%poly.length];
+    const currIn = keepAbove ? curr.v>=thresholdV : curr.v<=thresholdV;
+    const prevIn = keepAbove ? prev.v>=thresholdV : prev.v<=thresholdV;
+    if(currIn){
+      if(!prevIn) result.push(intersectV(prev,curr,thresholdV));
+      result.push(curr);
+    } else if(prevIn){
+      result.push(intersectV(prev,curr,thresholdV));
+    }
+  }
+  return result;
+}
+function intersectV(a,b,thresholdV){ const t=(thresholdV-a.v)/(b.v-a.v); return { u:a.u+t*(b.u-a.u), v:thresholdV }; }
+function polygonBoundsU(poly){ if(!poly.length) return null; let umin=Infinity,umax=-Infinity; poly.forEach(p=>{ umin=Math.min(umin,p.u); umax=Math.max(umax,p.u); }); return {umin,umax}; }
+function tileRegion(polyUV,vNear,vFar,spec){
+  const rows=[];
+  let v=vNear+spec.marginM;
+  const vFarUsable=vFar-spec.marginM;
+  while(v+spec.moduleDm<=vFarUsable+1e-9){
+    const band=clipHalfPlane(clipHalfPlane(polyUV,v,true),v+spec.moduleDm,false);
+    const b=polygonBoundsU(band);
+    if(b){
+      const uStart=b.umin+spec.marginM, uEnd=b.umax-spec.marginM;
+      const availW=uEnd-uStart;
+      if(availW>=spec.moduleWm){
+        const cols=Math.floor((availW+spec.colGapM)/(spec.moduleWm+spec.colGapM));
+        if(cols>0) rows.push({ v, cols, uStart });
+      }
+    }
+    v+=spec.moduleDm+spec.rowGapM;
+  }
+  return rows;
+}
+
+function readSpec(){
+  return {
+    watt: parseFloat($('modWatt').value)||0,
+    grade: $('modGrade').value,
+    moduleWm: (parseFloat($('modW').value)||0)/1000,
+    moduleDm: (parseFloat($('modD').value)||0)/1000,
+    colGapM: (parseFloat($('colGap').value)||0)/1000,
+    rowGapM: (parseFloat($('rowGap').value)||0)/1000,
+    marginM: (parseFloat($('edgeMargin').value)||0)/1000,
+    tierGapM: (parseFloat($('tierGap').value)||0)/1000,
+  };
+}
+
+function computeBuilding(b, spec){
+  if(b.points.length<3) return { error:'점이 3개 미만입니다.' };
+  const origin=b.points[0];
+  const localPts=b.points.map(p=>toLocalXY(p.lat,p.lng,origin.lat,origin.lng));
+  const areaM2=shoelaceArea(localPts);
+  if(!b.ridge) return { error:'용마루선이 설정되지 않았습니다.', areaM2 };
+
+  const ridgeLocal=b.ridge.map(p=>toLocalXY(p.lat,p.lng,origin.lat,origin.lng));
+  let uHat=normalize({ x:ridgeLocal[1].x-ridgeLocal[0].x, y:ridgeLocal[1].y-ridgeLocal[0].y });
+  let vHat={ x:-uHat.y, y:uHat.x };
+  // v가 남쪽을 향하도록 부호 보정 (x=동, y=북 좌표계에서 남쪽 벡터=(0,-1))
+  if(vHat.y>0){ vHat={x:-vHat.x,y:-vHat.y}; }
+
+  const tiltRad=(b.tilt||0)*Math.PI/180;
+  const vScale=1/Math.cos(tiltRad);
+
+  const polyUV=localPts.map(p=>{
+    const rel={ x:p.x-ridgeLocal[0].x, y:p.y-ridgeLocal[0].y };
+    const u=rel.x*uHat.x+rel.y*uHat.y;
+    const v=(rel.x*vHat.x+rel.y*vHat.y)*vScale;
+    return {u,v};
+  });
+
+  const rows=[]; // {u0,v0,u1,v1} screen-ready rectangles for rendering + count
+  let totalModules=0;
+
+  if(b.roofType==='ew'){
+    let vmin=Infinity,vmax=-Infinity;
+    polyUV.forEach(p=>{ vmin=Math.min(vmin,p.v); vmax=Math.max(vmax,p.v); });
+    const tileRows=tileRegion(polyUV,vmin,vmax,spec);
+    tileRows.forEach(r=>{
+      for(let c=0;c<r.cols;c++){
+        const u0=r.uStart+c*(spec.moduleWm+spec.colGapM);
+        rows.push({u0,v0:r.v,u1:u0+spec.moduleWm,v1:r.v+spec.moduleDm});
+      }
+    });
+    totalModules=tileRows.reduce((s,r)=>s+r.cols,0);
+  } else {
+    // 남북지붕: 용마루(v=0) 기준 앞단(남향, v>=0) 일괄배치 + 뒷단(북향, v<0) N단 분할
+    let vmaxFront=0;
+    polyUV.forEach(p=>{ if(p.v>0) vmaxFront=Math.max(vmaxFront,p.v); });
+    const frontRows=tileRegion(polyUV,0,vmaxFront,spec);
+    frontRows.forEach(r=>{
+      for(let c=0;c<r.cols;c++){
+        const u0=r.uStart+c*(spec.moduleWm+spec.colGapM);
+        rows.push({u0,v0:r.v,u1:u0+spec.moduleWm,v1:r.v+spec.moduleDm});
+      }
+    });
+    totalModules+=frontRows.reduce((s,r)=>s+r.cols,0);
+
+    const backPoly=polyUV.map(p=>({u:p.u,v:-p.v}));
+    let vmaxBack=0;
+    backPoly.forEach(p=>{ if(p.v>0) vmaxBack=Math.max(vmaxBack,p.v); });
+    const tiers=b.tiers||2;
+    const tierDepth=(vmaxBack-spec.tierGapM*(tiers-1))/tiers;
+    if(tierDepth>spec.moduleDm){
+      for(let i=0;i<tiers;i++){
+        const vNear=i*(tierDepth+spec.tierGapM);
+        const vFar=vNear+tierDepth;
+        const tierRows=tileRegion(backPoly,vNear,vFar,spec);
+        tierRows.forEach(r=>{
+          for(let c=0;c<r.cols;c++){
+            const u0=r.uStart+c*(spec.moduleWm+spec.colGapM);
+            const v0=-r.v; // 원래 부호(용마루 기준 북쪽=음수)로 되돌림
+            rows.push({u0,v0,u1:u0+spec.moduleWm,v1:v0-spec.moduleDm});
+          }
+        });
+        totalModules+=tierRows.reduce((s,r)=>s+r.cols,0);
+      }
+    }
+  }
+
+  return { areaM2, totalModules, rows, polyUV, roofType:b.roofType };
+}
+
+/* ===== 캔버스 렌더 ===== */
+function drawLayoutCanvas(canvas, result){
+  const ctx=canvas.getContext('2d');
+  const W=canvas.width=canvas.clientWidth*2, H=canvas.height=280*2;
+  ctx.clearRect(0,0,W,H);
+  const pts=result.polyUV;
+  let umin=Infinity,umax=-Infinity,vmin=Infinity,vmax=-Infinity;
+  pts.forEach(p=>{ umin=Math.min(umin,p.u); umax=Math.max(umax,p.u); vmin=Math.min(vmin,p.v); vmax=Math.max(vmax,p.v); });
+  const pad=30;
+  const scale=Math.min((W-pad*2)/(umax-umin||1),(H-pad*2)/(vmax-vmin||1))*0.92;
+  const toScreen=(u,v)=>({ x:pad+(u-umin)*scale, y:H-(pad+(v-vmin)*scale) });
+
+  ctx.strokeStyle='#5a86ff'; ctx.lineWidth=3; ctx.beginPath();
+  pts.forEach((p,i)=>{ const s=toScreen(p.u,p.v); if(i===0) ctx.moveTo(s.x,s.y); else ctx.lineTo(s.x,s.y); });
+  ctx.closePath(); ctx.stroke();
+
+  // 용마루선 (v=0)
+  const r0=toScreen(umin,0), r1=toScreen(umax,0);
+  ctx.strokeStyle='#e0596a'; ctx.lineWidth=2; ctx.setLineDash([8,6]);
+  ctx.beginPath(); ctx.moveTo(r0.x,r0.y); ctx.lineTo(r1.x,r1.y); ctx.stroke();
+  ctx.setLineDash([]);
+
+  ctx.fillStyle='rgba(232,149,47,0.85)'; ctx.strokeStyle='#241500'; ctx.lineWidth=1;
+  result.rows.forEach(r=>{
+    const a=toScreen(r.u0,r.v0), c=toScreen(r.u1,r.v1);
+    const x=Math.min(a.x,c.x), y=Math.min(a.y,c.y), w=Math.abs(c.x-a.x), h=Math.abs(c.y-a.y);
+    ctx.fillRect(x,y,w,h); ctx.strokeRect(x,y,w,h);
+  });
+
+  ctx.fillStyle='#929bb4'; ctx.font='24px sans-serif';
+  ctx.fillText('용마루(빨간 점선)', 10, 26);
+}
+
+/* ===== 계산 실행 ===== */
+$('calcBtn').onclick=()=>{
+  const spec=readSpec();
+  const included=state.buildings.filter(b=>b.included);
+  if(!included.length){ alert('계산할 건물을 1개 이상 그리고 체크해 주세요.'); return; }
+
+  const resultsWrap=$('buildingResults');
+  let totalModules=0, totalAreaM2=0;
+  const rawDump=[];
+  resultsWrap.innerHTML='';
+  $('resultsCard').hidden=false;
+  $('revenueCard').hidden=false;
+
+  included.forEach(b=>{
+    const spec_m={ moduleWm:spec.moduleWm, moduleDm:spec.moduleDm, colGapM:spec.colGapM, rowGapM:spec.rowGapM, marginM:spec.marginM, tierGapM:spec.tierGapM };
+    const res=computeBuilding(b,spec_m);
+    const block=document.createElement('div');
+    block.className='result-block';
+    if(res.error){
+      block.innerHTML=`<h3>${escapeHtml(b.name)}</h3><div class="err">${res.error}</div>`;
+    } else {
+      totalModules+=res.totalModules;
+      totalAreaM2+=res.areaM2;
+      const capKw=res.totalModules*spec.watt/1000;
+      block.innerHTML=`
+        <h3>${escapeHtml(b.name)} · ${b.roofType==='ns'?'남북지붕':'동서지붕'}${b.roofType==='ns'?` (뒷단 ${b.tiers}단)`:''}</h3>
+        <div class="result-line">평면 면적: <b>${res.areaM2.toFixed(1)} m²</b>${b.tilt?` (경사각 ${b.tilt}° 반영, 평면 기준 면적)`:''}</div>
+        <div class="result-line">모듈 수: <b>${res.totalModules}장</b> · 설치 용량: <b>${capKw.toFixed(2)} kW</b></div>
+        <canvas class="layout"></canvas>
+      `;
+      resultsWrap.appendChild(block);
+      const canvas=block.querySelector('canvas');
+      drawLayoutCanvas(canvas,res);
+      rawDump.push({
+        name:b.name, roofType:b.roofType, tiers:b.roofType==='ns'?b.tiers:null, tiltDeg:b.tilt,
+        points:b.points, ridge:b.ridge, areaM2:Number(res.areaM2.toFixed(2)),
+        moduleCount:res.totalModules, capacityKw:Number(capKw.toFixed(3))
+      });
+      return;
+    }
+    resultsWrap.appendChild(block);
+  });
+
+  const totalKw=totalModules*spec.watt/1000;
+  $('totalBox').innerHTML=`
+    <div>포함된 건물 ${included.length}개 · 총 평면 면적 <b>${totalAreaM2.toFixed(1)} m²</b></div>
+    <div class="big">${totalModules}장 · ${totalKw.toFixed(2)} kW</div>
+    <div class="hint">모듈: ${escapeHtml(spec.grade)} ${spec.watt}W (${$('modW').value}×${$('modD').value}mm 기준)</div>
+  `;
+  renderRevenue(totalKw);
+
+  $('rawData').value=JSON.stringify({
+    generatedAt:new Date().toISOString(),
+    moduleSpec:spec,
+    totalModules, totalCapacityKw:Number(totalKw.toFixed(3)), totalAreaM2:Number(totalAreaM2.toFixed(2)),
+    buildings:rawDump
+  },null,2);
+};
+
+function renderRevenue(totalKw){
+  const price=parseFloat($('priceKwh').value)||0;
+  const hoursList=[3.6,3.8,4.0];
+  let html='<tr><th>가정 발전시간</th><th>일 발전량</th><th>월 발전량</th><th>월 예상수익</th><th>연 발전량</th><th>연 예상수익</th></tr>';
+  hoursList.forEach(h=>{
+    const daily=totalKw*h;
+    const monthly=daily*30;
+    const yearly=daily*365;
+    html+=`<tr>
+      <td>${h}시간</td>
+      <td>${daily.toFixed(1)} kWh</td>
+      <td>${monthly.toFixed(0)} kWh</td>
+      <td>${(monthly*price).toLocaleString('ko-KR')}원</td>
+      <td>${yearly.toFixed(0)} kWh</td>
+      <td>${(yearly*price).toLocaleString('ko-KR')}원</td>
+    </tr>`;
+  });
+  $('revTable').innerHTML=html;
+}
+$('priceKwh').addEventListener('input',()=>{
+  if(!$('revenueCard').hidden){
+    const m=$('rawData').value;
+    try{ const d=JSON.parse(m); if(d && d.totalCapacityKw) renderRevenue(d.totalCapacityKw); }catch(e){}
+  }
+});
+
+/* ===== PWA ===== */
+if('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(console.error);
+
+trySavedKey();
+</script>
+</body></html>
